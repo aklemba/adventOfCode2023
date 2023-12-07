@@ -2,7 +2,7 @@ package pl.klemba.aoc.day1
 
 import java.io.File
 
-fun main() {
+fun main2() {
   // ----- PART 1 -----
   File(inputPath)
     .readLines()
