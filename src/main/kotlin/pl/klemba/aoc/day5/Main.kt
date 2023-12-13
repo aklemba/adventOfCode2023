@@ -20,6 +20,18 @@ fun main() {
       println("Resultlist: $it")
       println(it.min())
     }
+
+  // ----- PART 2 -----
+  val almanac2 = File(inputPath)
+    .readLines()
+
+  val seedRanges: List<LongRange> = getSeedRangesPart2(almanac2)
+
+  val mappings2 = getMappings(almanac2)
+
+  seedRanges
+    .fold(Long.MAX_VALUE) { acc, longRange -> findMinLocationOf(longRange, mappings2).let { location -> if (location < acc) location else acc } }
+    .let { println(it) }
 }
 
 fun getMappings(almanac: List<String>): ArrayList<ArrayList<MappingPattern>> {
@@ -58,6 +70,11 @@ fun getSeeds(almanac: List<String>): List<Long> =
     .map { it.destructured.component1().toLong() }
     .toList()
 
+fun getSeedRangesPart2(almanac: List<String>): List<LongRange> =
+  getSeeds(almanac)
+    .chunked(2)
+    .map { LongRange(it[0], it[0] + it[1]) }
+
 private fun Long.mapToLocation(mappings: java.util.ArrayList<java.util.ArrayList<MappingPattern>>) =
   mappings
     .fold(this) { acc, mappingPatterns ->
@@ -65,6 +82,10 @@ private fun Long.mapToLocation(mappings: java.util.ArrayList<java.util.ArrayList
         ?.let { pattern -> pattern.valueShift + acc }
         ?: acc
     }
+
+fun findMinLocationOf(longRange: LongRange, almanac2: ArrayList<ArrayList<MappingPattern>>) =
+  longRange
+    .fold(Long.MAX_VALUE) { acc, seed -> seed.mapToLocation(almanac2).let { location -> if (location < acc) location else acc } }
 
 /**
  * @param sourceRange range of IDs which can be mapped by this pattern
